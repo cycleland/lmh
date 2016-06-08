@@ -2,25 +2,12 @@
 var localStore = window.localStorage;
 /* surveyQuestion Model (This time, written in "JSON" format to interface more cleanly with Mustache) */
 var surveyQuestions = [
-						/*0*/
                        {
-                       "type": "mult1",
-                       "variableName": "snooze",
-                       "questionPrompt": "Are you able to take the survey now?",
-                       "minResponse": 0,
-                       "maxResponse": 1,
-                       "labels": [
-                                {"label": "No"},
-                                {"label": "Yes"}
-                                ],
-                       },
-                    	/*1*/
                        {
                        "type": "instructions",
                        "variableName": "generalInstructions",
-                       "questionPrompt": "On the following screens, we will be asking you questions about your food service experience at LMH.",
+                       "questionPrompt": "On the following screens, we will be asking you questions about your food service experience at Lady Margaret Hall.",
                        },
-                       /*2*/
                         {
                        "type":"mult1",
                        "variableName": "foodPreference",
@@ -35,18 +22,15 @@ var surveyQuestions = [
                                 {"label": "5"},
                                 ]
                        },
-                       /*3*/
                        {
                        "type":"text",
                        "variableName": "free_text",
-                       "questionPrompt": "Would you like to leave any other comments for today's meal?",
+                       "questionPrompt": "Would you like to leave any other comments about today's meal?",
                        }
- 
-
                        ];
 var lastPage = [
                 {
-                "message": "Thank you for completing today’s questions. Please wait while the data is sent to our servers..."
+                "message": "Thank you for completing the food service survey. Please wait while the data is sent to our servers..."
                 },
                 {
                 "message": "That's cool! I'll notify you again in 10 minutes!"
@@ -54,40 +38,7 @@ var lastPage = [
                 {
                 "message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
                 }
-                ];
-var participantSetup = [
-                        {
-                        "type": "text",
-                        "variableName": "participant_id",
-                        "questionPrompt": "Please enter your participant ID:"
-                        },
-                        {
-                    	"type": "timePicker",
-                        "variableName": "weekdayWakeTime",
-                        "questionPrompt": "Please select the time that you usually wake up on WEEKDAYS:"
-                        },
-                        {
-                    	"type": "timePicker",
-                        "variableName": "weekdayDinnerTime",
-                        "questionPrompt": "Please select the time that you usually have dinner on WEEKDAYS:"
-                        },
-                        {
-                        "type": "timePicker",
-                        "variableName": "weekendWakeTime",
-                        "questionPrompt": "Please select the time that you usually wake up on WEEKENDS:"
-                        },
-                        {
-                        "type": "timePicker",
-                        "variableName": "weekendDinnerTime",
-                        "questionPrompt": "Please select the time that you usually have dinner on WEEKENDS:"
-                        },
-                        ];
 
-/*Populate the view with data from surveyQuestion model*/
-// Making mustache templates
-//Here you declare global variables are well 
-var NUMSETUPQS = participantSetup.length;
-var SNOOZEQ = 0;
 var questionTmpl = "<p>{{{questionText}}}</p><ul>{{{buttons}}}</ul>";
 var questionTextTmpl = "{{questionPrompt}}";
 var buttonTmpl = "<li><button id='{{id}}' value='{{value}}'>{{label}}</button></li>";
@@ -379,7 +330,7 @@ sampleParticipant: function() {
 saveData:function() {
     $.ajax({
            type: 'post',
-           url: 'http://ec2-52-49-133-115.eu-west-1.compute.amazonaws.com/cgi-bin/data_collector.cgi', 
+           url: 'http://52.208.68.38/cgi-bin/data_collector.cgi', 
            data: localStore,
            crossDomain: true,
            success: function (result) {
@@ -397,7 +348,7 @@ saveData:function() {
 saveDataLastPage:function() {
     $.ajax({
            type: 'post',
-           url: 'http://ec2-52-49-133-115.eu-west-1.compute.amazonaws.com/cgi-bin/data_collector.cgi', 
+           url: ' http://52.208.68.38/cgi-bin/data_collector.cgi', 
            data: localStore,
            crossDomain: true,
            success: function (result) {	
