@@ -39,7 +39,7 @@ var participantSetup = [
                        ];
 
 var NUMSETUPQS = participantSetup.length;
-var SNOOZEQ = 0;
+//var SNOOZEQ = 0;
 var questionTmpl = "<p>{{{questionText}}}</p><ul>{{{buttons}}}</ul>";
 var questionTextTmpl = "{{questionPrompt}}";
 var buttonTmpl = "<li><button id='{{id}}' value='{{value}}'>{{label}}</button></li>";
@@ -208,19 +208,20 @@ renderQuestion: function(question_index) {
 
 renderLastPage: function(pageData, question_index) {
     $("#question").html(Mustache.render(lastPageTmpl, pageData));
-    if ( question_index == SNOOZEQ ) {
-        app.snoozeNotif();
-        localStore.snoozed = 1;
+    //if ( question_index == SNOOZEQ ) {
+        //app.snoozeNotif();
+        //localStore.snoozed = 1;
         //app.saveData();        
-    }
-    else if ( question_index == -1) {
+    //}
+    /*else*/ if ( question_index == -1) {
     	app.saveDataLastPage();
     }
     else {
     	var datestamp = new Date();
     	var year = datestamp.getFullYear(), month = datestamp.getMonth(), day=datestamp.getDate(), hours=datestamp.getHours(), minutes=datestamp.getMinutes(), seconds=datestamp.getSeconds();
-    	localStore[uniqueKey + '.' + "completed" + "_" + "completedSurvey"  + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds] = 1;	
-    	app.saveDataLastPage();
+    	//localStore[uniqueKey + '.' + "completed" + "_" + "completedSurvey"  + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds] = 1;	
+    	localStore["completed"] = 1;
+        app.saveDataLastPage();
     }
 },
     /* Record User Responses */
@@ -282,7 +283,7 @@ recordResponse: function(button, count, type) {
     //This is where you do the Question Logic
     if (count <= -1) {console.log(uniqueRecord);}
    	if (count == -1) {app.scheduleNotifs(); app.renderLastPage(lastPage[2], count);}
-    else if (count == SNOOZEQ && response == 0) {app.renderLastPage(lastPage[1], count);}
+    //else if (count == SNOOZEQ && response == 0) {app.renderLastPage(lastPage[1], count);}
     else if (count == 5 && response == 0) {app.renderLastPage(lastPage[0], count);}
     else if (count == 5 && response == 1) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(6);});}
     else if (count == 7 && response == 0) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(9);});}
@@ -312,15 +313,16 @@ init: function() {
         localStore.uniqueKey = uniqueKey;
         app.renderQuestion(0);
     //}
-    localStore.snoozed = 0;
+    //localStore.snoozed = 0;
 },
     
 sampleParticipant: function() {
     var current_moment = new Date();
     var current_time = current_moment.getTime();
-    if ((current_time - localStore.pause_time) > 600000 || localStore.snoozed == 1) {
+    //if ((current_time - localStore.pause_time) > 600000 || localStore.snoozed == 1) {
+    if ((current_time - localStore.pause_time) > 600000) {
         uniqueKey = new Date().getTime();
-        localStore.snoozed = 0;
+        //localStore.snoozed = 0;
         app.renderQuestion(0);
     }
     else {
@@ -336,12 +338,12 @@ saveData:function() {
            crossDomain: true,
            success: function (result) {
            //var pid = localStore.participant_id;
-           var snoozed = localStore.snoozed, 
-           	   uniqueKey = localStore.uniqueKey, 
+           //var snoozed = localStore.snoozed, 
+           var uniqueKey = localStore.uniqueKey, 
                pause_time = localStore.pause_time;
            localStore.clear();
            //localStore.participant_id = pid;
-           localStore.snoozed = snoozed;
+           //localStore.snoozed = snoozed;
            localStore.uniqueKey = uniqueKey;
            localStore.pause_time = pause_time;
            },
@@ -356,11 +358,11 @@ saveDataLastPage:function() {
            crossDomain: true,
            success: function (result) {	
            		//var pid = localStore.participant_id; 
-                var snoozed = localStore.snoozed, 
-                    uniqueKey = localStore.uniqueKey;
+                //var snoozed = localStore.snoozed, 
+                var uniqueKey = localStore.uniqueKey;
            		localStore.clear();
             	//localStore.participant_id = pid;
-           		localStore.snoozed = snoozed;
+           		//localStore.snoozed = snoozed;
            		localStore.uniqueKey = uniqueKey;
            		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey.</h3>");
            },
