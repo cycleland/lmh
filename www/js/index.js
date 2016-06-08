@@ -3,7 +3,6 @@ var localStore = window.localStorage;
 /* surveyQuestion Model (This time, written in "JSON" format to interface more cleanly with Mustache) */
 var surveyQuestions = [
                        {
-                       {
                        "type": "instructions",
                        "variableName": "generalInstructions",
                        "questionPrompt": "On the following screens, we will be asking you questions about your food service experience at Lady Margaret Hall.",
@@ -25,7 +24,7 @@ var surveyQuestions = [
                        {
                        "type":"text",
                        "variableName": "free_text",
-                       "questionPrompt": "Would you like to leave any other comments about today's meal?",
+                       "questionPrompt": "Would you like to leave any comments about today's meal?",
                        }
                        ];
 var lastPage = [
@@ -33,12 +32,14 @@ var lastPage = [
                 "message": "Thank you for completing the food service survey. Please wait while the data is sent to our servers..."
                 },
                 {
-                "message": "That's cool! I'll notify you again in 10 minutes!"
-                },
-                {
                 "message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
-                }
+                }];
 
+var participantSetup = [
+                       ];
+
+var NUMSETUPQS = participantSetup.length;
+var SNOOZEQ = 0;
 var questionTmpl = "<p>{{{questionText}}}</p><ul>{{{buttons}}}</ul>";
 var questionTextTmpl = "{{questionPrompt}}";
 var buttonTmpl = "<li><button id='{{id}}' value='{{value}}'>{{label}}</button></li>";
@@ -210,7 +211,7 @@ renderLastPage: function(pageData, question_index) {
     if ( question_index == SNOOZEQ ) {
         app.snoozeNotif();
         localStore.snoozed = 1;
-        app.saveData();        
+        //app.saveData();        
     }
     else if ( question_index == -1) {
     	app.saveDataLastPage();
@@ -299,18 +300,18 @@ recordResponse: function(button, count, type) {
     /* Time stamps the current moment to determine how to resume */
 pauseEvents: function() {
     localStore.pause_time = new Date().getTime();
-    app.saveData();
+    //app.saveData();
 }, 
     /* Initialize the whole thing */
 init: function() {
     uniqueKey = new Date().getTime();
-    localStore.participant_id = "1234";
-    if (localStore.participant_id === " " || !localStore.participant_id) {app.renderQuestion(-NUMSETUPQS);}
-    else {
+    //localStore.participant_id = "1234";
+    //if (localStore.participant_id === " " || !localStore.participant_id) {app.renderQuestion(-NUMSETUPQS);}
+    //else {
     	uniqueKey = new Date().getTime();
         localStore.uniqueKey = uniqueKey;
         app.renderQuestion(0);
-    }
+    //}
     localStore.snoozed = 0;
 },
     
@@ -325,7 +326,7 @@ sampleParticipant: function() {
     else {
         uniqueKey = localStore.uniqueKey;
     }
-    app.saveData();
+    //app.saveData();
 },  
 saveData:function() {
     $.ajax({
@@ -334,10 +335,12 @@ saveData:function() {
            data: localStore,
            crossDomain: true,
            success: function (result) {
-           var pid = localStore.participant_id, snoozed = localStore.snoozed, 
-           		uniqueKey = localStore.uniqueKey, pause_time = localStore.pause_time;
+           //var pid = localStore.participant_id;
+           var snoozed = localStore.snoozed, 
+           	   uniqueKey = localStore.uniqueKey, 
+               pause_time = localStore.pause_time;
            localStore.clear();
-           localStore.participant_id = pid;
+           //localStore.participant_id = pid;
            localStore.snoozed = snoozed;
            localStore.uniqueKey = uniqueKey;
            localStore.pause_time = pause_time;
@@ -352,16 +355,18 @@ saveDataLastPage:function() {
            data: localStore,
            crossDomain: true,
            success: function (result) {	
-           		var pid = localStore.participant_id, snoozed = localStore.snoozed, uniqueKey = localStore.uniqueKey;
+           		//var pid = localStore.participant_id; 
+                var snoozed = localStore.snoozed, 
+                    uniqueKey = localStore.uniqueKey;
            		localStore.clear();
-            	localStore.participant_id = pid;
+            	//localStore.participant_id = pid;
            		localStore.snoozed = snoozed;
            		localStore.uniqueKey = uniqueKey;
            		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey.</h3>");
            },
            error: function (request, error) {
            		console.log(error);
-                $("#question").html("<h3>Please try resending data. If problems persist, please contact the researchers.</h3><br><button>Resend data</button>");
+                $("#question").html("<h3>Please try resending data. If problems persist, please contact agne@cycle.land.</h3><br><button>Resend data</button>");
                 $("#question button").click(function () {app.saveDataLastPage();});           		
            	},
            });
@@ -374,8 +379,8 @@ scheduleNotifs:function() {
    	var currentMaxHour, currentMaxMinutes, currentMinHour, currenMinMinutes, nextMinHour, nextMinMinutes;
    	var currentLag, dinnerLag, maxInterval;
    	var day = 86400000;
-   	var minDiaryLag = 5400000;
-   	var randomDiaryLag = 1800000;
+   	var minLag = 5400000;
+   	var randomLag = 1800000;
 	var weekendDinnerTime = localStore.weekendDinnerTime.split(":");
 	var weekendWakeTime = localStore.weekendWakeTime.split(":");
 	var weekdayDinnerTime = localStore.weekdayDinnerTime.split(":");
@@ -422,12 +427,12 @@ scheduleNotifs:function() {
             	nightlyLag= (((((24 - parseInt(currentHour) + parseInt(nextMinHour))*60) - parseInt(currentMinute) + parseInt(nextMinMinutes))*60)*1000);
    			}
    			maxInterval = (((((parseInt(currentMaxHour) - parseInt(currentMinHour))*60) + parseInt(currentMaxMinutes) - parseInt(currenMinMinutes))*60)*1000);
-   			interval1 = parseInt(currentLag) + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag)) + day*i;
-   			interval2 = interval1 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval3 = interval2 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval4 = interval3 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval5 = interval4 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval6 = interval5 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
+   			interval1 = parseInt(currentLag) + (parseInt(Math.round(Math.random()*randomLag)+minLag)) + day*i;
+   			interval2 = interval1 + (parseInt(Math.round(Math.random()*randomLag)+minLag));
+   			interval3 = interval2 + (parseInt(Math.round(Math.random()*randomLag)+minLag));
+   			interval4 = interval3 + (parseInt(Math.round(Math.random()*randomLag)+minLag));
+   			interval5 = interval4 + (parseInt(Math.round(Math.random()*randomLag)+minLag));
+   			interval6 = interval5 + (parseInt(Math.round(Math.random()*randomLag)+minLag));
    			dinnerInterval = parseInt(currentLag) + parseInt(maxInterval) + day*i;
    			
    			a = 101+(parseInt(i)*100);
@@ -444,20 +449,28 @@ scheduleNotifs:function() {
         	date5 = new Date(now + interval5);
         	date6 = new Date(now + interval6);
         	
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: a, at: date1, text: 'Time for your next Diary Survey!', title: 'Diary Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: b, at: date2, text: 'Time for your next Diary Survey!', title: 'Diary Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: c, at: date3, text: 'Time for your next Diary Survey!', title: 'Diary Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: d, at: date4, text: 'Time for your next Diary Survey!', title: 'Diary Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: e, at: date5, text: 'Time for your next Diary Survey!', title: 'Diary Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: f, at: date6, text: 'Time for your next Diary Survey!', title: 'Diary Survey'}); 
-
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: a, at: date1, text: 'Time for your next  Survey!', title: ' Survey'});
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: b, at: date2, text: 'Time for your next  Survey!', title: ' Survey'});
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: c, at: date3, text: 'Time for your next  Survey!', title: ' Survey'});
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: d, at: date4, text: 'Time for your next  Survey!', title: ' Survey'});
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: e, at: date5, text: 'Time for your next  Survey!', title: ' Survey'});
+        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: f, at: date6, text: 'Time for your next  Survey!', title: ' Survey'}); 
+            /*
         	localStore['notification_' + i + '_1'] = localStore.participant_id + "_" + a + "_" + date1;
         	localStore['notification_' + i + '_2'] = localStore.participant_id + "_" + b + "_" + date2;
         	localStore['notification_' + i + '_3'] = localStore.participant_id + "_" + c + "_" + date3;
         	localStore['notification_' + i + '_4'] = localStore.participant_id + "_" + d + "_" + date4;
         	localStore['notification_' + i + '_5'] = localStore.participant_id + "_" + e + "_" + date5;
         	localStore['notification_' + i + '_6'] = localStore.participant_id + "_" + f + "_" + date6;
-        	}
+        	*/
+            localStore['notification_' + i + '_1'] = a + "_" + date1;
+        	localStore['notification_' + i + '_2'] = b + "_" + date2;
+        	localStore['notification_' + i + '_3'] = c + "_" + date3;
+        	localStore['notification_' + i + '_4'] = d + "_" + date4;
+        	localStore['notification_' + i + '_5'] = e + "_" + date5;
+        	localStore['notification_' + i + '_6'] = f + "_" + date6;
+
+            }
 },
 snoozeNotif:function() {
     var now = new Date().getTime(), snoozeDate = new Date(now + 600*1000);
@@ -469,15 +482,16 @@ snoozeNotif:function() {
                                          text: 'Please complete survey now!',
                                          at: snoozeDate,
                                          });
-  //console.log(snoozeDate);                                       
 },     
 validateResponse: function(data){
         var text = data.val();
-//         console.log(text);
+        /*
         if (text === ""){
         	return false;
         } else { 
         	return true;
         }
+        */
+        return true;
     },      
 };
