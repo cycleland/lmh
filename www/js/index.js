@@ -2,15 +2,11 @@
 var localStore = window.localStorage;
 /* surveyQuestion Model (This time, written in "JSON" format to interface more cleanly with Mustache) */
 var surveyQuestions = [
-                       {
-                       "type": "instructions",
-                       "variableName": "general_instructions",
-                       "questionPrompt": "On the following screens, we will ask you questions about your food service experience at LMH.",
-                       },
-                        {
+                      /*0*/ 
+                      {
                        "type":"mult1",
-                       "variableName": "food_preference",
-                       "questionPrompt": "On a scale of 1 to 5 (1 being the lowest and 5 being the highest), how would you rate today's food at LMH?",
+                       "variableName": "overall_food_rating",
+                       "questionPrompt": "How would you rate your overall experience with your meal at LMH today?",
                        "minResponse": 1,
                        "maxResponse": 5,
                        "labels": [
@@ -21,10 +17,128 @@ var surveyQuestions = [
                                 {"label": "5"},
                                 ]
                        },
+                       /*1*/
                        {
                        "type":"text",
-                       "variableName": "free_text",
-                       "questionPrompt": "Would you like to leave any comments about today's meal?",
+                       "variableName": "overall_food_text",
+                       "questionPrompt": "Do you have a comment on your food experience?",
+                       },
+                       /*2*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_continue_query_1",
+                       "questionPrompt": "Would you like to rate an individual food item? (e.g. fish, chicken, potato, salad)",
+                       "minResponse": 0,
+                       "maxResponse": 1,
+                       "labels": [
+                                {"label": "Yes"},
+                                {"label": "No"}
+                                ]
+                       },
+                       /*3*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_query_1",
+                       "questionPrompt": "Which food item would you like to rate? (you can rate up to 3 individual items)",
+                       },
+                       /*4*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_rating_1",
+                       "questionPrompt": "How would you rate that item?",
+                       "minResponse": 1,
+                       "maxResponse": 5,
+                       "labels": [
+                                {"label": "1"},
+                                {"label": "2"},
+                                {"label": "3"},
+                                {"label": "4"},
+                                {"label": "5"},
+                                ]
+                       },
+                       /*5*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_text_1",
+                       "questionPrompt": "Do you have a comment on that food item?",
+                       },
+                       /*6*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_continue_query_2",
+                       "questionPrompt": "Would you like to rate another individual food item?",
+                       "minResponse": 0,
+                       "maxResponse": 1,
+                       "labels": [
+                                {"label": "Yes"},
+                                {"label": "No"}
+                                ]
+                       },
+                       /*7*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_query_2",
+                       "questionPrompt": "Which food item would you like to rate? ",
+                       },
+                       /*8*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_rating_2",
+                       "questionPrompt": "How would you rate that item?",
+                       "minResponse": 1,
+                       "maxResponse": 5,
+                       "labels": [
+                                {"label": "1"},
+                                {"label": "2"},
+                                {"label": "3"},
+                                {"label": "4"},
+                                {"label": "5"},
+                                ]
+                       },
+                       /*9*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_text_2",
+                       "questionPrompt": "Do you have a comment on that food item?",
+                       },
+                       /*10*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_continue_query_3",
+                       "questionPrompt": "Would you like to rate another individual food item?",
+                       "minResponse": 0,
+                       "maxResponse": 1,
+                       "labels": [
+                                {"label": "Yes"},
+                                {"label": "No"}
+                                ]
+                       },
+                       /*11*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_query_3",
+                       "questionPrompt": "Which food item would you like to rate? ",
+                       },
+                       /*12*/
+                       {
+                       "type":"mult1",
+                       "variableName": "individual_food_rating_3",
+                       "questionPrompt": "How would you rate that item?",
+                       "minResponse": 1,
+                       "maxResponse": 5,
+                       "labels": [
+                                {"label": "1"},
+                                {"label": "2"},
+                                {"label": "3"},
+                                {"label": "4"},
+                                {"label": "5"},
+                                ]
+                       },
+                       /*13*/
+                       {
+                       "type":"text",
+                       "variableName": "individual_food_text_3",
+                       "questionPrompt": "Do you have a comment on that food item?",
                        }
                        ];
 var lastPage = [
@@ -34,7 +148,6 @@ var lastPage = [
                 {
                 "message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
                 }];
-
 var participantSetup = [
                        ];
 
@@ -284,6 +397,9 @@ recordResponse: function(button, count, type) {
     //This is where you do the Question Logic
     if (count <= -1) {console.log(uniqueRecord);}
    	if (count == -1) {app.scheduleNotifs(); app.renderLastPage(lastPage[2], count);}
+    else if (count == 2 && response == 1) {app.renderLastPage(lastPage[0], count);}
+    else if (count == 6 && response == 1) {app.renderLastPage(lastPage[0], count);}
+    else if (count == 10 && response == 1) {app.renderLastPage(lastPage[0], count);}
     /*
     else if (count == SNOOZEQ && response == 0) {app.renderLastPage(lastPage[1], count);}
     else if (count == 5 && response == 0) {app.renderLastPage(lastPage[0], count);}
@@ -367,7 +483,7 @@ saveDataLastPage:function() {
             	//localStore.participant_id = pid;
            		//localStore.snoozed = snoozed;
            		localStore.unique_key = unique_key;
-           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey. You may now exit the app.</h3>");
+           		$("#question").html("<h3>Thank you very much! Your feedback is highly appreciated.</h3>");
            },
            error: function (request, error) {
            		console.log(error);
