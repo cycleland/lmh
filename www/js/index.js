@@ -4,13 +4,13 @@ var localStore = window.localStorage;
 var surveyQuestions = [
                        {
                        "type": "instructions",
-                       "variableName": "generalInstructions",
-                       "questionPrompt": "On the following screens, we will be asking you questions about your food service experience at Lady Margaret Hall.",
+                       "variableName": "general_instructions",
+                       "questionPrompt": "On the following screens, we will ask you questions about your food service experience at LMH.",
                        },
                         {
                        "type":"mult1",
-                       "variableName": "foodPreference",
-                       "questionPrompt": "How would you rate today's food at LMH?",
+                       "variableName": "food_preference",
+                       "questionPrompt": "On a scale of 1 to 5 (1 being the lowest and 5 being the highest), how would you rate today's food at LMH?",
                        "minResponse": 1,
                        "maxResponse": 5,
                        "labels": [
@@ -51,7 +51,7 @@ var datePickerTmpl = '<li><input id="{{id}}" data-format="DD-MM-YYYY" data-templ
 var dateAndTimePickerTmpl = '<li><input id="{{id}}" data-format="DD-MM-YYYY-HH-mm" data-template="D MMM YYYY  HH:mm" name="datetime24"><br /><br /></li><li><button type="submit" value="Enter">Enter</button></li><script>$(function(){$("input").combodate({firstItem: "name",minYear:2015, maxYear:2016});});</script>';
 var timePickerTmpl = '<li><input id="{{id}}" data-format="HH:mm" data-template="HH : mm" name="time"><br /><br /></li><li><button type="submit" value="Enter">Enter</button></li><script>$(function(){$("input").combodate({firstItem: "name"});});</script>';
 var lastPageTmpl = "<h3>{{message}}</h3>";
-var uniqueKey; 
+var unique_key; 
 var name;
 
 var app = {
@@ -217,9 +217,9 @@ renderLastPage: function(pageData, question_index) {
     	app.saveDataLastPage();
     }
     else {
-    	var datestamp = new Date();
-    	var year = datestamp.getFullYear(), month = datestamp.getMonth(), day=datestamp.getDate(), hours=datestamp.getHours(), minutes=datestamp.getMinutes(), seconds=datestamp.getSeconds();
-    	//localStore[uniqueKey + '.' + "completed" + "_" + "completedSurvey"  + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds] = 1;	
+    	//var datestamp = new Date();
+    	//var year = datestamp.getFullYear(), month = datestamp.getMonth(), day=datestamp.getDate(), hours=datestamp.getHours(), minutes=datestamp.getMinutes(), seconds=datestamp.getSeconds();
+    	//localStore[unique_key + '.' + "completed" + "_" + "completedSurvey"  + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds] = 1;	
     	localStore["completed"] = 1;
         app.saveDataLastPage();
     }
@@ -274,16 +274,18 @@ recordResponse: function(button, count, type) {
 		response = button.split(/,(.+)/)[1];
      	currentQuestion = button.split(",",1);
     }
-    if (count == 6) {name = response;}
-    if (count <= -1) {uniqueRecord = currentQuestion;}
-    else {uniqueRecord = uniqueKey + "_" + currentQuestion + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
-//     //Save this to local storage
-    localStore[uniqueRecord] = response;
+    //if (count == 6) {name = response;}
+    //if (count <= -1) {uniqueRecord = currentQuestion;}
+    //else {uniqueRecord = unique_key + "_" + currentQuestion + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
+    //Save this to local storage
+    //localStore[uniqueRecord] = response;
+    if (count > 0) {localStore[currentQuestion] = response;}
     //Identify the next question to populate the view
     //This is where you do the Question Logic
     if (count <= -1) {console.log(uniqueRecord);}
    	if (count == -1) {app.scheduleNotifs(); app.renderLastPage(lastPage[2], count);}
-    //else if (count == SNOOZEQ && response == 0) {app.renderLastPage(lastPage[1], count);}
+    /*
+    else if (count == SNOOZEQ && response == 0) {app.renderLastPage(lastPage[1], count);}
     else if (count == 5 && response == 0) {app.renderLastPage(lastPage[0], count);}
     else if (count == 5 && response == 1) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(6);});}
     else if (count == 7 && response == 0) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(9);});}
@@ -294,6 +296,7 @@ recordResponse: function(button, count, type) {
     else if (count == 13 && response == 1) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(14);});}
     else if (count == 16 && response == 0) {app.renderLastPage(lastPage[0], count);}
     else if (count == 16 && response == 1) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(14);});}
+    */
     else if (count < surveyQuestions.length-1) {$("#question").fadeOut(400, function () {$("#question").html("");app.renderQuestion(count+1);});}
     else {app.renderLastPage(lastPage[0], count);}
 },
@@ -305,12 +308,12 @@ pauseEvents: function() {
 }, 
     /* Initialize the whole thing */
 init: function() {
-    uniqueKey = new Date().getTime();
+    unique_key = new Date().getTime();
     //localStore.participant_id = "1234";
     //if (localStore.participant_id === " " || !localStore.participant_id) {app.renderQuestion(-NUMSETUPQS);}
     //else {
-    	uniqueKey = new Date().getTime();
-        localStore.uniqueKey = uniqueKey;
+    	unique_key = new Date().getTime();
+        localStore.unique_key = unique_key;
         app.renderQuestion(0);
     //}
     //localStore.snoozed = 0;
@@ -321,12 +324,12 @@ sampleParticipant: function() {
     var current_time = current_moment.getTime();
     //if ((current_time - localStore.pause_time) > 600000 || localStore.snoozed == 1) {
     if ((current_time - localStore.pause_time) > 600000) {
-        uniqueKey = new Date().getTime();
+        unique_key = new Date().getTime();
         //localStore.snoozed = 0;
         app.renderQuestion(0);
     }
     else {
-        uniqueKey = localStore.uniqueKey;
+        unique_key = localStore.unique_key;
     }
     //app.saveData();
 },  
@@ -339,12 +342,12 @@ saveData:function() {
            success: function (result) {
            //var pid = localStore.participant_id;
            //var snoozed = localStore.snoozed, 
-           var uniqueKey = localStore.uniqueKey, 
+           var unique_key = localStore.unique_key, 
                pause_time = localStore.pause_time;
            localStore.clear();
            //localStore.participant_id = pid;
            //localStore.snoozed = snoozed;
-           localStore.uniqueKey = uniqueKey;
+           localStore.unique_key = unique_key;
            localStore.pause_time = pause_time;
            },
            error: function (request, error) {console.log(error);},
@@ -359,16 +362,16 @@ saveDataLastPage:function() {
            success: function (result) {	
            		//var pid = localStore.participant_id; 
                 //var snoozed = localStore.snoozed, 
-                var uniqueKey = localStore.uniqueKey;
+                var unique_key = localStore.unique_key;
            		localStore.clear();
             	//localStore.participant_id = pid;
            		//localStore.snoozed = snoozed;
-           		localStore.uniqueKey = uniqueKey;
-           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey.</h3>");
+           		localStore.unique_key = unique_key;
+           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey. You may now exit the app.</h3>");
            },
            error: function (request, error) {
            		console.log(error);
-                $("#question").html("<h3>Please try resending data. If problems persist, please contact agne@cycle.land.</h3><br><button>Resend data</button>");
+                $("#question").html("<h3>Please try resending data. If problems persist, please contact the admin.</h3><br><button>Resend data</button>");
                 $("#question button").click(function () {app.saveDataLastPage();});           		
            	},
            });
