@@ -171,6 +171,7 @@ var app = {
     // Application Constructor
 initialize: function() {
     this.bindEvents();
+    localStore.clear();
 },
     // Bind Event Listeners
 bindEvents: function() {
@@ -333,7 +334,7 @@ renderLastPage: function(pageData, question_index) {
     	//var datestamp = new Date();
     	//var year = datestamp.getFullYear(), month = datestamp.getMonth(), day=datestamp.getDate(), hours=datestamp.getHours(), minutes=datestamp.getMinutes(), seconds=datestamp.getSeconds();
     	//localStore[unique_key + '.' + "completed" + "_" + "completedSurvey"  + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds] = 1;	
-    	localStore["completed"] = 1;
+    	//localStore["completed"] = 1;
         app.saveDataLastPage();
     }
 },
@@ -392,7 +393,10 @@ recordResponse: function(button, count, type) {
     //else {uniqueRecord = unique_key + "_" + currentQuestion + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
     //Save this to local storage
     //localStore[uniqueRecord] = response;
-    if (count > 0) {localStore[currentQuestion] = response;}
+    console.log(currentQuestion);
+    console.log(response);
+    console.log(localStore);
+    if (count >= 0) {localStore[currentQuestion] = response;}
     //Identify the next question to populate the view
     //This is where you do the Question Logic
     if (count <= -1) {console.log(uniqueRecord);}
