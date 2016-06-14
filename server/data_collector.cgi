@@ -33,8 +33,9 @@ vals = [fs.getvalue(k, 'None') for k in keys]
 
 #Sanitize text values: remove all characters except alphanumerics, whitespaces, dashes, periods
 #See https://docs.python.org/2/library/cgi.html
+#Note: substitution is applied characterwise.
 pattern = re.compile('[^a-zA-Z0-9._-]+$')   
-san_vals = [pattern.sub('', v) for v in vals]
+san_vals = [''.join([pattern.sub('', c) for c in v]) for v in vals]
 
 #Limit response string lengths to 200 characters
 san_vals = [x[:200] if len(x) > 200 else x for x in san_vals]

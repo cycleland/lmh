@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.example.lmn" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="land.cycle.lmh" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>LMH</name>
     <description>
         A sample food service rating app for Lady Margaret Hall College, Oxford 
@@ -10,7 +10,7 @@
     <content src="index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
-
+    <preference name="SplashMaintainAspectRatio" value="true" />
     <allow-intent href="http://*/*" />
     <icon src="www/img/logo.png" />
     <allow-intent href="https://*/*" />

@@ -1,0 +1,11 @@
+{
+     "android": {
+         "release": {
+             "keystore": "CYCLELANDLMH-mobileapps.keystore",
+             "storePassword": "lmh-cycl34nd",
+             "alias": "CYCLELANDLMHmobileapps",
+             "password" : "lmh-cycl34nd",
+             "keystoreType": ""
+         }
+     }
+ }
