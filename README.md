@@ -1,6 +1,6 @@
-# lmh
+# Survey App
 
-Food service survey app for Lady Margaret Hall College, Oxford.
+User preference survey app
 
 To setup, follow instructions here:
 * [experiencesampler docs](http://www.experiencesampler.com/createapp.html)
